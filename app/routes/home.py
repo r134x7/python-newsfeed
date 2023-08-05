@@ -1,10 +1,21 @@
 from flask import Blueprint, render_template
+from app.db import get_db
+from app.models import Post
 
 bp = Blueprint('home', __name__, url_prefix='/')
 
 @bp.route('/')
 def index():
-  return render_template('homepage.html')
+  # get all posts
+  db = get_db()
+  posts = ( # use () to multiline python code without error
+    db
+      .query(Post)
+      .order_by(Post.created_at.desc())
+      .all()
+  )
+
+  return render_template('homepage.html', posts=posts)
 
 @bp.route('/login')
 def login():
